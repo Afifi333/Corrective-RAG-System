@@ -1,0 +1,23 @@
+Retrieval-Augmented Generation (RAG)
+
+Retrieval-Augmented Generation, or RAG, is a technique that combines a large language model (LLM) with an external
+knowledge source. Instead of relying only on the knowledge the model memorized during training, a RAG system
+retrieves relevant pieces of text from a document collection at query time and feeds them to the model as context.
+This allows the model to answer questions about private documents, recent events, or domain-specific material that
+it was never trained on.
+
+A standard RAG pipeline has three stages. First, documents are ingested: files are loaded, cleaned, and split into
+smaller chunks so that each piece of text is small enough to embed and retrieve accurately. Second, each chunk is
+converted into a vector using an embedding model and stored in a vector database. Third, at query time, the user's
+question is embedded with the same model, and the vector database returns the chunks whose embeddings are closest
+to the question's embedding. Those chunks are inserted into a prompt and passed to the LLM, which generates an
+answer grounded in the retrieved text.
+
+The main weakness of standard RAG is that it trusts the retriever blindly. If the retrieved chunks are irrelevant,
+outdated, or low quality, the LLM will still try to answer using them, which often produces a hallucinated or
+misleading response. Corrective RAG (CRAG) addresses this weakness by adding an evaluation step: after retrieval,
+a lightweight grader (often the LLM itself acting as a judge) scores each retrieved chunk as relevant or
+irrelevant to the question. If too few chunks are relevant, the system rewrites the query to be clearer or more
+specific and retrieves again, repeating this correction loop a limited number of times. Only chunks that pass the
+relevance check are used to generate the final answer, and if no relevant context can be found after correction,
+the system honestly reports that it does not have enough information instead of guessing.

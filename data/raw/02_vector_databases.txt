@@ -1,0 +1,24 @@
+Vector Databases
+
+A vector database is a system designed to store, index, and search high-dimensional numeric vectors, called
+embeddings. Embeddings are produced by machine learning models that map text, images, or audio into a fixed-size
+list of numbers such that semantically similar inputs end up close together in that numeric space. Unlike a
+traditional database, which is optimized for exact matches on rows and columns, a vector database is optimized
+for similarity search: given a query vector, it quickly finds the stored vectors that are nearest to it according
+to a distance metric such as cosine similarity or Euclidean distance.
+
+Popular vector databases include Chroma, FAISS, Pinecone, Weaviate, Qdrant, and Milvus. Chroma is an open-source,
+embedded vector database that is very easy to run locally from a Python process, which makes it a common choice
+for prototypes, coursework, and small to medium applications. It can persist its index to disk so that embeddings
+do not need to be recomputed every time the application restarts. FAISS, developed by Meta, is a library rather
+than a full database; it is extremely fast for similarity search but leaves indexing, persistence, and metadata
+filtering largely to the developer. Pinecone and Weaviate are managed cloud services that add features such as
+horizontal scaling, hybrid search, and access control on top of the same core similarity-search idea.
+
+In a Retrieval-Augmented Generation system, the vector database is the component that makes retrieval possible.
+Document chunks are embedded once and stored with metadata such as the source file name and chunk position. When
+a user asks a question, the question is embedded with the same embedding model, and the vector database returns
+the top-k most similar chunks. The quality of these results depends heavily on how the documents were chunked
+(chunk size and overlap), which embedding model was used, and how many results (k) are requested. Retrieving too
+few chunks can miss relevant information, while retrieving too many can dilute the context with irrelevant text
+and increase the risk of the language model producing an inaccurate answer.

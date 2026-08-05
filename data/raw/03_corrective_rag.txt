@@ -1,0 +1,25 @@
+Corrective Retrieval-Augmented Generation (CRAG)
+
+Corrective RAG is an extension of standard Retrieval-Augmented Generation that adds a self-correction loop around
+the retrieval step. The core idea, introduced in the "Corrective Retrieval Augmented Generation" research, is that
+a RAG system should not blindly trust whatever the retriever returns. Instead, it should evaluate the quality of
+the retrieved documents before allowing the language model to use them, and take corrective action when the
+retrieved context is weak.
+
+A typical Corrective RAG pipeline works as follows. First, the system retrieves the top-k chunks for the user's
+question from the vector database, exactly like standard RAG. Second, a relevance grader, usually a small prompt
+to the LLM asking "is this chunk relevant to the question, yes or no", scores every retrieved chunk. Third, the
+system computes what fraction of the retrieved chunks were graded relevant. If that fraction is above a chosen
+threshold, the pipeline proceeds directly to answer generation using only the chunks marked relevant. If the
+fraction is too low, the system concludes that the original query was not well matched to the document collection
+and triggers a correction: it asks the LLM to rewrite the question into a clearer or more specific version, and
+retrieves again with the rewritten query. This retrieve-grade-rewrite loop can repeat for a small, fixed number of
+attempts.
+
+Finally, the answer-generation step uses a strict prompt that instructs the model to answer only from the verified,
+relevant context and to explicitly say that it does not know the answer if no relevant context was found even
+after correction. This design significantly reduces hallucination compared to standard RAG, because a weak or
+mismatched retrieval no longer silently leads to a confident but wrong answer; instead, the system either recovers
+through query rewriting or honestly reports that it cannot answer. Corrective RAG is especially useful for systems
+answering questions over a fixed, closed set of documents, such as course material, internal knowledge bases, or
+product documentation, where returning an unsupported answer is worse than returning no answer at all.
