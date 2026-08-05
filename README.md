@@ -8,6 +8,11 @@ or irrelevant, it rewrites the question and retries retrieval. This significantl
 The whole project runs **fully locally via [Ollama](https://ollama.com)** — no API key, no cost, and
 inference itself runs on your machine.
 
+## Contributors
+
+- [Afifi333](https://github.com/Afifi333)
+- [mostafaasaad32](https://github.com/mostafaasaad32)
+
 ## Architecture
 
 ```
